@@ -130,10 +130,17 @@ class Home extends Downloader {
     }
     return new Promise((resolve) => {
       Core.sendToBackground('fetch', {
-        url: `${location.protocol}//webapi.115.com/files/download?pickcode=${file}`,
+        // url: `${location.protocol}//webapi.115.com/files/download?pickcode=${file}`,
+        url: `${location.protocol}//proapi.115.com/app/chrome/down?method=get_file_url&pickcode=${file}`,
         options
       }, (data) => {
-        const path = data.file_url.match(/.*115.com(\/.*\/)/)[1]
+        // var startindex = data.file_url.indexOf('115.com/')
+        // var res = data.file_url.substring(startindex + 7, 66)
+        var path_ = data.file_url.match(/.*115.com(\/.*\/)/)
+        var path = ''
+        if (path_ != null) { path = path_[1] }
+        // const path = data.file_url.match(/.*115.com(\/.*\/)/)[1]
+        // const path = res
         Core.requestCookies([{ path }]).then((cookies) => {
           data.cookies = cookies
           resolve(data)
@@ -150,7 +157,6 @@ class Home extends Downloader {
           this.fileDownloadInfo.push({
             name: files[item.pickcode].path + item.file_name,
             link: item.file_url,
-            size: item.file_size,
             sha1: files[item.pickcode].sha1,
             cookies: item.cookies,
             pickcode: item.pickcode
